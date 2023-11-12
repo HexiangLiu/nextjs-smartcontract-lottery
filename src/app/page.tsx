@@ -1,6 +1,7 @@
 'use client';
 import { createWeb3Modal, defaultConfig } from '@web3modal/ethers5/react';
 import LotteryApp from '@/segments/app';
+import './global.css';
 
 // 1. Get projectId
 const projectId = '8490fab7b40aa0caf54f82279ba60eba';

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Layout, Button, message } from 'antd';
+import { Layout, Button, message, List } from 'antd';
 import {
   useWeb3ModalAccount,
   useWeb3ModalSigner,
@@ -17,6 +17,7 @@ const ContentWrapper = () => {
   const [recentWinner, setRecentWinner] = useState<string>('0');
   const { address, chainId, isConnected } = useWeb3ModalAccount();
   const { signer } = useWeb3ModalSigner();
+  const [loading, setLoading] = useState<boolean>(false);
   //@ts-ignore
   const raffleAddress = contractAddress[chainId];
 
@@ -41,6 +42,7 @@ const ContentWrapper = () => {
 
   const enterRaffle = async () => {
     try {
+      setLoading(true);
       const transRes = await contract?.enterRaffle({
         value: ethers.utils.parseEther(entranceFee),
       });
@@ -51,6 +53,7 @@ const ContentWrapper = () => {
       console.error(e);
       message.error('Transaction Declined');
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -61,17 +64,23 @@ const ContentWrapper = () => {
   }, [init]);
 
   return (
-    <Content>
-      <div>Contract Address: {address}</div>
+    <Content className='p-5'>
       {raffleAddress && (
-        <div>
-          <div>EntranceFee: {entranceFee}ETH</div>
-          <div>Number Of Players: {numPlayer}</div>
-          <div>Recent Winner: {recentWinner}</div>
-          <Button type='primary' onClick={enterRaffle}>
+        <List>
+          <List.Item>Contract Address: {address}</List.Item>
+          <List.Item>EntranceFee: {entranceFee}ETH</List.Item>
+          <List.Item>Number Of Players: {numPlayer}</List.Item>
+          <List.Item>Recent Winner: {recentWinner}</List.Item>
+          <Button
+            loading={loading}
+            type='primary'
+            onClick={enterRaffle}
+            className='mt-2'
+            size='large'
+          >
             EnterRaffle
           </Button>
-        </div>
+        </List>
       )}
     </Content>
   );
